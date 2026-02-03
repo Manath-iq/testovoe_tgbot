@@ -23,8 +23,8 @@ async def handle_message(message: Message) -> None:
         await message.answer("0")
         return
 
-    config: Config = message.bot["config"]
-    pool = message.bot["db_pool"]
+    config: Config = dp.workflow_data["config"]
+    pool = dp.workflow_data["db_pool"]
 
     try:
         spec_raw = await gemini_query(config.gemini_api_key, config.gemini_model, message.text)
@@ -42,9 +42,8 @@ async def main() -> None:
     config = Config()
     bot = Bot(token=config.telegram_token)
     pool = await create_pool(config.database_url)
-
-    bot["config"] = config
-    bot["db_pool"] = pool
+    dp.workflow_data["config"] = config
+    dp.workflow_data["db_pool"] = pool
 
     await dp.start_polling(bot)
 

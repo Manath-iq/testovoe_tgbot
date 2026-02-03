@@ -1,22 +1,27 @@
 import asyncio
 import json
 import os
+from datetime import datetime
 from typing import Any
 
 import asyncpg
+
+
+def parse_ts(value: str) -> datetime:
+    return datetime.fromisoformat(value)
 
 
 def build_video_row(video: dict[str, Any]) -> tuple:
     return (
         video["id"],
         video["creator_id"],
-        video["video_created_at"],
+        parse_ts(video["video_created_at"]),
         video["views_count"],
         video["likes_count"],
         video["comments_count"],
         video["reports_count"],
-        video["created_at"],
-        video["updated_at"],
+        parse_ts(video["created_at"]),
+        parse_ts(video["updated_at"]),
     )
 
 
@@ -32,8 +37,8 @@ def build_snapshot_row(snapshot: dict[str, Any]) -> tuple:
         snapshot["delta_likes_count"],
         snapshot["delta_comments_count"],
         snapshot["delta_reports_count"],
-        snapshot["created_at"],
-        snapshot["updated_at"],
+        parse_ts(snapshot["created_at"]),
+        parse_ts(snapshot["updated_at"]),
     )
 
 

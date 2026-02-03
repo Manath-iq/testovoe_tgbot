@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, field_validator
 
 Source = Literal["videos", "video_snapshots"]
 Aggregation = Literal["count", "count_distinct", "sum"]
-Field = Literal[
+MetricField = Literal[
     "id",
     "video_id",
     "creator_id",
@@ -25,7 +25,7 @@ Op = Literal["=", ">", ">=", "<", "<="]
 
 
 class Filter(BaseModel):
-    field: Field
+    field: MetricField
     op: Op
     value: str | int | float
 
@@ -33,7 +33,7 @@ class Filter(BaseModel):
 class QuerySpec(BaseModel):
     source: Source
     aggregation: Aggregation
-    field: Field | None = None
+    field: MetricField | None = None
     date_field: DateField | None = None
     date_from: str | None = None
     date_to: str | None = None
@@ -51,7 +51,7 @@ class QuerySpec(BaseModel):
 
     @field_validator("field")
     @classmethod
-    def validate_field(cls, value: Field | None, info):
+    def validate_field(cls, value: MetricField | None, info):
         aggregation = info.data.get("aggregation")
         if aggregation == "sum" and value is None:
             raise ValueError("Field is required for sum")
